@@ -386,4 +386,4 @@ function App() {
 
 export default App;
 
-// hello buddy
+// hello Buddy
