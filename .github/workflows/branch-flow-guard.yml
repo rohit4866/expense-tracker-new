@@ -1,0 +1,49 @@
+
+Branch flow guard · YML
+name: Branch Flow Guard
+ 
+# Automatically rejects any Pull Request that doesn't follow the approved flow:
+#   feature/*  -> developer
+#   developer  -> qa
+#   qa         -> main
+# Add this workflow as a required status check on developer, qa, and main
+# so a PR literally cannot be merged if it breaks the flow.
+ 
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+ 
+jobs:
+  check-branch-flow:
+    name: Validate PR source/target branches
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch flow
+        run: |
+          BASE="${{ github.event.pull_request.base.ref }}"
+          HEAD="${{ github.event.pull_request.head.ref }}"
+          echo "Pull Request: $HEAD -> $BASE"
+ 
+          if [ "$BASE" = "developer" ]; then
+            if [[ "$HEAD" != feature/* ]]; then
+              echo "Only feature/* branches may be merged into developer. Got: $HEAD"
+              exit 1
+            fi
+          fi
+ 
+          if [ "$BASE" = "qa" ]; then
+            if [ "$HEAD" != "developer" ]; then
+              echo "Only the developer branch may be merged into qa. Got: $HEAD"
+              exit 1
+            fi
+          fi
+ 
+          if [ "$BASE" = "main" ]; then
+            if [ "$HEAD" != "qa" ]; then
+              echo "Only the qa branch may be merged into main. Got: $HEAD"
+              exit 1
+            fi
+          fi
+ 
+          echo "Branch flow valid."
+ 
