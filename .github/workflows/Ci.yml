@@ -1,0 +1,40 @@
+
+Ci · YML
+name: CI Checks
+ 
+# Runs automatically on every Pull Request targeting developer, qa, or main.
+# This is the required status check you'll enable in branch protection rules.
+ 
+on:
+  pull_request:
+    branches:
+      - developer
+      - qa
+      - main
+ 
+jobs:
+  lint-build-test:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+ 
+      - name: Install dependencies
+        run: npm ci
+ 
+      - name: Run Lint
+        run: npm run lint --if-present
+ 
+      - name: Run Tests
+        run: npm run test --if-present -- --watchAll=false
+ 
+      - name: Build Project
+        run: npm run build
+ 
