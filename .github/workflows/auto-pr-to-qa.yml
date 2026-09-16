@@ -1,0 +1,35 @@
+name: Auto PR to QA
+
+on:
+  push:
+    branches:
+      - developer
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pr:
+    name: Open developer -> qa PR if needed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for an existing open PR
+        id: check_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_COUNT=$(gh pr list --base qa --head developer --state open --json number --jq 'length')
+          echo "existing=$PR_COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Create the PR if none exists yet
+        if: steps.check_pr.outputs.existing == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --base qa --head developer \
+            --title "Sync: developer -> qa" \
+            --body "Automatically opened because new commits landed on developer. Review and merge once QA is ready to test this."
