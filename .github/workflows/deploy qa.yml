@@ -1,0 +1,39 @@
+
+Deploy qa · YML
+name: Deploy - QA Environment
+ 
+# Runs automatically whenever code is merged into the qa branch.
+# The actual deploy step is a placeholder until you pick a hosting provider.
+ 
+on:
+  push:
+    branches:
+      - qa
+ 
+jobs:
+  deploy-qa:
+    name: Build & Deploy to QA Environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+ 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+ 
+      - name: Install dependencies
+        run: npm ci
+ 
+      - name: Build Project
+        run: npm run build
+ 
+      # TODO: replace with a real deploy step once a hosting provider is chosen. Examples:
+      #   Vercel:   npx vercel --token=$VERCEL_TOKEN
+      #   Netlify:  npx netlify deploy --dir=dist --auth=$NETLIFY_AUTH_TOKEN
+      #   AWS S3:   aws s3 sync ./dist s3://your-qa-bucket --delete
+      - name: Deploy (placeholder)
+        run: echo "Add your QA deployment command here"
+ 
