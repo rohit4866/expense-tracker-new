@@ -91,7 +91,7 @@ function App() {
       {/* Header */}
       <header className="header">
         <div>
-          <h1>Expense Tracker New</h1>
+          <h1>Expense Tracker.......</h1>
 
           <p>
             Manage your daily expenses easily.
