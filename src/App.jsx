@@ -91,7 +91,7 @@ function App() {
       {/* Header */}
       <header className="header">
         <div>
-          <h1>Expense Tracker</h1>
+          <h1>Expense Tracker.......</h1>
 
           <p>
             Manage your daily expenses easily.
@@ -386,4 +386,3 @@ function App() {
 
 export default App;
 
-// hello buddy

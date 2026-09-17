@@ -5,4 +5,10 @@ export default defineConfig({
   plugins: [react()],
 
   base: "/expense-tracker/",
+  server: {
+  host: true,
+  watch: {
+    usePolling: true
+  }
+}
 });

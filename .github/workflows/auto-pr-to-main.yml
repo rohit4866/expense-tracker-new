@@ -1,0 +1,35 @@
+name: Auto PR to Main
+
+on:
+  push:
+    branches:
+      - qa
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  open-pr:
+    name: Open qa -> main PR if needed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for an existing open PR
+        id: check_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_COUNT=$(gh pr list --base main --head qa --state open --json number --jq 'length')
+          echo "existing=$PR_COUNT" >> "$GITHUB_OUTPUT"
+
+      - name: Create the PR if none exists yet
+        if: steps.check_pr.outputs.existing == '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --base main --head qa \
+            --title "Release: qa -> main" \
+            --body "Automatically opened because new commits landed on qa. This is production — review carefully before merging."
